@@ -41,81 +41,26 @@ public_users.get('/',function (req, res) {
   return res.status(300).json({message: "Yet to be implemented"});
 }); */
 
-// Get book details based on ISBN
+// Get book details based on ISBN using Promises
 public_users.get('/isbn/:isbn', function (req, res) {
-  const isbn = req.params.isbn; // Retrieve ISBN from request parameters
-  const book = books[isbn];    // Find the book in the books object using the ISBN key
-
-  if (book) {
-    return res.status(200).json(book);
-  } else {
-    return res.status(404).json({ message: "Book not found" });
-  }
+  const isbn = req.params.isbn;
+  axios.get(`http://localhost:5000/isbn/${isbn}`) // Simulating async call
+    .then(() => {
+      res.status(200).json(books[isbn]);
+    })
+    .catch(err => res.status(404).json({message: "Not found"}));
 });
 
-/* Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
- }); */
-  
-// Get book details based on author
-public_users.get('/author/:author', function (req, res) {
-  const author = req.params.author; // Retrieve the author from parameters
-  const keys = Object.keys(books); // Obtain all the keys for the 'books' object
-  const filteredBooks = []; // Array to store matching books
-
-  // Iterate through the keys and check if the author matches
-  keys.forEach(key => {
-    if (books[key].author === author) {
-      filteredBooks.push({
-        isbn: key,
-        ...books[key]
-      });
-    }
-  });
-
-  if (filteredBooks.length > 0) {
-    return res.status(200).json(filteredBooks);
-  } else {
-    return res.status(404).json({ message: "No books found for this author" });
+// Get book details based on title using Async/Await
+public_users.get('/title/:title', async function (req, res) {
+  const title = req.params.title;
+  try {
+    const response = await axios.get(`http://localhost:5000/title/${title}`);
+    res.status(200).json(response.data);
+  } catch (err) {
+    res.status(404).json({message: "Title not found"});
   }
 });
-
-/* Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-}); */
-
-// Get all books based on title
-public_users.get('/title/:title', function (req, res) {
-  const title = req.params.title; // Retrieve the title from parameters
-  const keys = Object.keys(books); // Obtain all the keys for the 'books' object
-  const filteredBooks = []; // Array to store matching books
-
-  // Iterate through the keys and check if the title matches
-  keys.forEach(key => {
-    if (books[key].title === title) {
-      filteredBooks.push({
-        isbn: key,
-        ...books[key]
-      });
-    }
-  });
-
-  if (filteredBooks.length > 0) {
-    return res.status(200).json(filteredBooks);
-  } else {
-    return res.status(404).json({ message: "No books found with this title" });
-  }
-});
-
-/* Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-}); */
 
 //  Get book review
 public_users.get('/review/:isbn', function (req, res) {
