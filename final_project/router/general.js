@@ -151,5 +151,16 @@ public_users.get('/async-get-books', async function (req, res) {
     }
 });
 
+// Task 11: Get book details based on ISBN using Promises
+public_users.get('/isbn/:isbn', function (req, res) {
+    const isbn = req.params.isbn;
+    axios.get(`http://localhost:5000/isbn/${isbn}`)
+        .then(response => {
+            res.status(200).json(response.data);
+        })
+        .catch(err => {
+            res.status(404).json({ message: "Book not found", error: err.message });
+        });
+});
 
 module.exports.general = public_users;
